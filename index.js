@@ -122,7 +122,7 @@ async function run() {
 }
 run().catch(console.dir);
 
-app.get("/api", (req, res) => {
+app.get("/", (req, res) => {
   res.send("Running the server on Mr. Trave Travel 22");
 });
 app.listen(port, () => {
