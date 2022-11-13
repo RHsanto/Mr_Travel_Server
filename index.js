@@ -28,7 +28,6 @@ async function run() {
     const bookingCollection = database.collection("bookingCollection");
 
     //Here all get information
-
     app.get("/allTravelsData", async (req, res) => {
       const cursor = AllTravelsData.find({});
       const ATB = await cursor.toArray();
