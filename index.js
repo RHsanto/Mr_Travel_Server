@@ -126,7 +126,7 @@ app.get("/", (req, res) => {
   res.send("Running the server on Mr. Trave Travel =20");
 });
 app.listen(port, () => {
-  console.log("Running the server on  Travel 1233 ", port);
+  console.log("Running the server on 1 ", port);
 });
 
 // module.exports = app
