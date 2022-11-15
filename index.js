@@ -26,6 +26,7 @@ async function run() {
     const CollectionFlights = database.collection("collectionThree");
     const CollectionHotel = database.collection("collectionFour");
     const bookingCollection = database.collection("bookingCollection");
+    const reviewsCollection = database.collection("reviewsCollection");
 
     //Here all get information
     app.get("/allTravelsData", async (req, res) => {
@@ -66,8 +67,14 @@ async function run() {
       const booking = await cursor.toArray();
       res.send(booking);
     });
-
-    // here put booking data
+   
+    app.get("/reviews", async (req,res)=>{
+      const cursor = reviewsCollection.find({});
+      const reviews =await cursor.toArray();
+      res.send(reviews)
+    })
+    
+ // here put booking data
     app.post("/booking", async (req, res) => {
       const user = req.body;
       const result = await bookingCollection.insertOne(user);
