@@ -17,6 +17,7 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 async function run() {
+  console.log("run");
   try {
     await client.connect();
     const database = client.db("allDataCollection");
@@ -126,6 +127,7 @@ async function run() {
     // await client.close();
   }
 }
+
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
