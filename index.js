@@ -17,7 +17,6 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 async function run() {
-  console.log("run");
   try {
     await client.connect();
     const database = client.db("allDataCollection");
@@ -123,39 +122,15 @@ async function run() {
       const bus = await CollectionBus.findOne(query);
       res.json(bus);
     });
-
-
-    app.use((req, res, next) => {
-      throw Error("Requested content wasn't found");
-    });
-    
-    app.use((err, req, res, next) => {
-      if(req.headerSent){
-          next('Something went wrong!');
-      }
-      else{
-          if(err.message){
-              res.status(404).json({success: false, message: err.message})
-          }  else{
-              res.status(500).json({success: false, message: "There was an internal problem"})
-          }
-      }
-    })
-    
   } finally {
     // await client.close();
   }
 }
-
 run().catch(console.dir);
 
-// app.get("/", (req, res) => {
-//   res.send("Running the server on Mr. Trave Travel 23");
-// });
-
-// 
-
-
+app.get("/", (req, res) => {
+  res.send("Running the server on Mr. Trave Travel 23");
+});
 app.listen(port, () => {
   console.log("Running the server on 2 ", port);
 });
