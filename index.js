@@ -27,6 +27,7 @@ async function run() {
     const CollectionHotel = database.collection("collectionFour");
     const bookingCollection = database.collection("bookingCollection");
     const reviewsCollection = database.collection("reviewsCollection");
+    const UserInfoCollection = database.collection("UserInfoCollection");
 
     //Here all get information
     app.get("/allTravelsData", async (req, res) => {
@@ -74,6 +75,13 @@ async function run() {
       res.send(reviews)
     })
     
+ // here put upload img 
+    app.post("/imgupload", async (req, res) => {
+      const user = req.body;
+      const result = await UserInfoCollection.insertOne(user);
+      res.json(result);
+    });
+
  // here put booking data
     app.post("/booking", async (req, res) => {
       const user = req.body;
