@@ -80,6 +80,7 @@ async function run() {
       const user = req.body;
       const result = await UserInfoCollection.insertOne(user);
       res.json(result);
+      console.log(user);
     });
 
  // here put booking data
