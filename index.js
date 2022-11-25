@@ -88,16 +88,19 @@ async function run() {
 
 // here use multer
 
-app.post('/imgupload', upload.single('image'),(req, res) => {
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
-  console.log(req.file);
+app.post('/imgupload', upload.single('image'), (req, res) => {
+  const user = req.file;
+  console.log(user);
   if(!req.file){
     res.send({code:500,msg:"error disay re baba"})
   }
   else{
-    res.send({code:200,msg:"upload success"})
+    const url = req.protocol + "://" + req.get("host");
+    const imageLink = `${url}/uploads/${req.file.filename}`;
+    console.log(imageLink);
+    res.send({code:200,msg:imageLink})
   }
+  
 })
 
 
