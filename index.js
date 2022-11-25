@@ -3,14 +3,16 @@ require("dotenv").config();
 const ObjectId = require("mongodb").ObjectId;
 const express = require("express");
 const cors = require("cors");
-const multer  = require('multer')
-const upload = multer({ dest: 'uploads/' })
 const app = express();
+const path = require("path");
 const port = process.env.PORT || 8000;
 
 //middleware
 app.use(cors());
 app.use(express.json());
+
+// static folder
+app.use(express.static(path.join(__dirname, "uploads")));
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@mr-travel-app.aqkf7.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
@@ -78,30 +80,31 @@ async function run() {
     })
     
  // here put upload img 
-    // app.post("/imgupload", async (req, res) => {
-    //   const user = req.body;
-    //   console.log(req.body);
-    //   const result = await UserInfoCollection.insertOne(user);
-    //   res.json(result);
-    //   console.log(user);
-    // });
-
+    app.post("/imgupload", async (req, res) => {
+      const user = req.body.imageLink;
+      const result = await UserInfoCollection.insertOne({image: user});
+      res.json(result);
+      // console.log(user);
+    });
+   
 // here use multer
 
-app.post('/imgupload', upload.single('image'), (req, res) => {
-  const user = req.file;
-  console.log(user);
-  if(!req.file){
-    res.send({code:500,msg:"error disay re baba"})
-  }
-  else{
-    const url = req.protocol + "://" + req.get("host");
-    const imageLink = `${url}/uploads/${req.file.filename}`;
-    console.log(imageLink);
-    res.send({code:200,msg:imageLink})
-  }
+// app.post('/imgupload', upload.single('image'), (req, res) => {
+//   const user = req.file;
+//   console.log(user);
+//   console.log(req.files);
+//   console.log(req.file);
+//   if(!req.file){
+//     res.send({code:500,msg:"error disay re baba"})
+//   }
+//   else{
+//     const url = req.protocol + "://" + req.get("host");
+//     const imageLink = `${url}/uploads/${req.file.originalname}`;
+//     console.log(imageLink);
+//     res.send({code:200,msg:imageLink})
+//   }
   
-})
+// })
 
 
 
