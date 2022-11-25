@@ -3,6 +3,8 @@ require("dotenv").config();
 const ObjectId = require("mongodb").ObjectId;
 const express = require("express");
 const cors = require("cors");
+const multer  = require('multer')
+const upload = multer({ dest: 'uploads/' })
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -76,12 +78,31 @@ async function run() {
     })
     
  // here put upload img 
-    app.post("/imgupload", async (req, res) => {
-      const user = req.body;
-      const result = await UserInfoCollection.insertOne(user);
-      res.json(result);
-      console.log(user);
-    });
+    // app.post("/imgupload", async (req, res) => {
+    //   const user = req.body;
+    //   console.log(req.body);
+    //   const result = await UserInfoCollection.insertOne(user);
+    //   res.json(result);
+    //   console.log(user);
+    // });
+
+// here use multer
+
+app.post('/imgupload', upload.single('image'),(req, res) => {
+  // req.file is the `avatar` file
+  // req.body will hold the text fields, if there were any
+  console.log(req.file);
+  if(!req.file){
+    res.send({code:500,msg:"error disay re baba"})
+  }
+  else{
+    res.send({code:200,msg:"upload success"})
+  }
+})
+
+
+
+
 
  // here put booking data
     app.post("/booking", async (req, res) => {
