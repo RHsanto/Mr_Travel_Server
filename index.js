@@ -79,6 +79,19 @@ async function run() {
       res.send(reviews)
     })
     
+    app.get("/upload-img", async (req,res)=>{
+      const cursor = UserInfoCollection.find({});
+      const reviews =await cursor.toArray();
+      res.send(reviews)
+    })
+
+    app.get("/upload-img/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const booking = await UserInfoCollection.findOne(query);
+      res.json(booking);
+    });
+    
  // here put upload img 
     app.post("/imgupload", async (req, res) => {
       const user = req.body.imageLink;
