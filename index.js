@@ -73,13 +73,13 @@ async function run() {
       const booking = await cursor.toArray();
       res.send(booking);
     });
-   
-    app.get("/reviews", async (req,res)=>{
+
+    app.get("/reviews", async (req, res) => {
       const cursor = reviewsCollection.find({});
-      const reviews =await cursor.toArray();
-      res.send(reviews)
-    })
-    
+      const reviews = await cursor.toArray();
+      res.send(reviews);
+    });
+
     // app.get("/upload-img", async (req,res)=>{
     //   const cursor = UserInfoCollection.find({});
     //   const reviews =await cursor.toArray();
@@ -92,39 +92,47 @@ async function run() {
     //   const booking = await UserInfoCollection.findOne(query);
     //   res.json(booking);
     // });
-    
- // here put upload img 
+
+    // here put upload img
     app.post("/imgupload", async (req, res) => {
       const user = req.body.imageLink;
-      const result = await UserInfoCollection.insertOne({image: user});
+      const result = await UserInfoCollection.insertOne({ image: user });
       res.json(result);
       // console.log(user);
     });
-   
 
-
-
- // here put booking data
+    // here put booking data
     app.post("/booking", async (req, res) => {
       const user = req.body;
       const result = await bookingCollection.insertOne(user);
       res.json(result);
     });
 
-// user info save
+    // user info save
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await UserCollection.insertOne(user);
       res.json(result);
     });
 
+    //Here put google login info
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = { $set: user };
+      const result = UserCollection.updateOne(filter, updateDoc, options);
+      res.json(result);
+    });
+
+    
     // GET LOGGED USER ORDERS
     app.get("/booking/:email", async (req, res) => {
       const result = await bookingCollection.find({ email: req.params.email }).toArray();
       res.json(result);
     });
 
-//HERE GET SINGLE INFORMATION
+    //HERE GET SINGLE INFORMATION
     app.get("/booked/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
@@ -136,7 +144,7 @@ async function run() {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const offers = await CollectionHotel.findOne(query);
-      res.json(offers);  
+      res.json(offers);
     });
 
     app.get("/flights/:id", async (req, res) => {
@@ -173,4 +181,3 @@ app.listen(port, () => {
 });
 
 // module.exports = app
-  
