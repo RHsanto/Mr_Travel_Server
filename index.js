@@ -96,9 +96,11 @@ async function run() {
     // here put upload img
     app.post("/imgupload", async (req, res) => {
       const user = req.body.imageLink;
+      const email = req.body.email;
       const result = await UserInfoCollection.insertOne({ image: user });
       res.json(result);
       // console.log(user);
+      console.log(email);
     });
 
     // here put booking data
@@ -125,7 +127,7 @@ async function run() {
       res.json(result);
     });
 
-    
+
     // GET LOGGED USER ORDERS
     app.get("/booking/:email", async (req, res) => {
       const result = await bookingCollection.find({ email: req.params.email }).toArray();
