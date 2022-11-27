@@ -100,24 +100,9 @@ async function run() {
       // console.log(user);
     });
    
-// here use multer
 
-// app.post('/imgupload', upload.single('image'), (req, res) => {
-//   const user = req.file;
-//   console.log(user);
-//   console.log(req.files);
-//   console.log(req.file);
-//   if(!req.file){
-//     res.send({code:500,msg:"error disay re baba"})
-//   }
-//   else{
-//     const url = req.protocol + "://" + req.get("host");
-//     const imageLink = `${url}/uploads/${req.file.originalname}`;
-//     console.log(imageLink);
-//     res.send({code:200,msg:imageLink})
-//   }
-  
-// })
+
+
 
 
 
