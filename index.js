@@ -32,6 +32,7 @@ async function run() {
     const bookingCollection = database.collection("bookingCollection");
     const reviewsCollection = database.collection("reviewsCollection");
     const UserInfoCollection = database.collection("UserInfoCollection");
+    const UserCollection = database.collection("userCollection");
 
     //Here all get information
     app.get("/allTravelsData", async (req, res) => {
@@ -79,18 +80,18 @@ async function run() {
       res.send(reviews)
     })
     
-    app.get("/upload-img", async (req,res)=>{
-      const cursor = UserInfoCollection.find({});
-      const reviews =await cursor.toArray();
-      res.send(reviews)
-    })
+    // app.get("/upload-img", async (req,res)=>{
+    //   const cursor = UserInfoCollection.find({});
+    //   const reviews =await cursor.toArray();
+    //   res.send(reviews)
+    // })
 
-    app.get("/upload-img/:id", async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: ObjectId(id) };
-      const booking = await UserInfoCollection.findOne(query);
-      res.json(booking);
-    });
+    // app.get("/upload-img/:id", async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: ObjectId(id) };
+    //   const booking = await UserInfoCollection.findOne(query);
+    //   res.json(booking);
+    // });
     
  // here put upload img 
     app.post("/imgupload", async (req, res) => {
@@ -103,15 +104,17 @@ async function run() {
 
 
 
-
-
-
-
-
  // here put booking data
     app.post("/booking", async (req, res) => {
       const user = req.body;
       const result = await bookingCollection.insertOne(user);
+      res.json(result);
+    });
+
+// user info save
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await UserCollection.insertOne(user);
       res.json(result);
     });
 
