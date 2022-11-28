@@ -80,27 +80,45 @@ async function run() {
       res.send(reviews);
     });
 
-    // app.get("/upload-img", async (req,res)=>{
-    //   const cursor = UserInfoCollection.find({});
-    //   const reviews =await cursor.toArray();
-    //   res.send(reviews)
+    // app.get("/user/", async (req,res)=>{
+    //   const cursor = UserCollection.find({});
+    //   const loggedUser =await cursor.toArray();
+    //   res.send(loggedUser)
     // })
-
-    // app.get("/upload-img/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: ObjectId(id) };
-    //   const booking = await UserInfoCollection.findOne(query);
-    //   res.json(booking);
-    // });
+    app.get("/user/:email", async (req, res) => {
+      const result = await UserCollection.find({ email: req.params.email }).toArray();
+      res.json(result);
+    });
+ 
 
     // here put upload img
-    app.post("/imgupload", async (req, res) => {
-      const user = req.body.imageLink;
-      const email = req.body.email;
-      const result = await UserInfoCollection.insertOne({ image: user });
-      res.json(result);
+    app.post("/profile-edit", async (req, res) => {
+      const imageLink = req.body.imageLink || "";
+      const email = req.body.email || "";
+      if(!email){
+        return res.status(400).json({message:"user not found"})
+      }
+      const user = await UserCollection.findOne({email:email})
       // console.log(user);
-      console.log(email);
+      if(!user._id){
+        return res.status(400).json({msg:"user id not found"})
+      }
+
+      UserCollection.updateOne({ email:email },
+        {$set:{imageLink:imageLink}
+      });
+     res.send("success")
+    });
+
+
+    //Here put google login info
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = { $set: user };
+      const result = UserCollection.updateOne(filter, updateDoc, options);
+      res.json(result);
     });
 
     // here put booking data
@@ -117,16 +135,7 @@ async function run() {
       res.json(result);
     });
 
-    //Here put google login info
-    app.put("/users", async (req, res) => {
-      const user = req.body;
-      const filter = { email: user.email };
-      const options = { upsert: true };
-      const updateDoc = { $set: user };
-      const result = UserCollection.updateOne(filter, updateDoc, options);
-      res.json(result);
-    });
-
+    
 
     // GET LOGGED USER ORDERS
     app.get("/booking/:email", async (req, res) => {
