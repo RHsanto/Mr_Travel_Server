@@ -85,6 +85,62 @@ async function run() {
     //   const loggedUser =await cursor.toArray();
     //   res.send(loggedUser)
     // })
+    // app.post("/pro-user", async (req, res) => {
+    //   const user = req.body;
+    //   console.log(req.body.email);
+    //   const result = await UserInfoCollection.insertOne(user);
+    //   res.json(result);
+    // });
+
+   
+
+    
+    app.post("/pro-user/:email", async (req, res) => {
+      const email = req.params?.email || "";
+      // console.log(email);
+      
+      if(!email){
+        return res.status(400).json({message:"user not found"})
+      }
+      const user = await UserCollection.findOne({email:email})
+      // console.log(user);
+
+      if(!user._id){
+        return res.status(400).json({msg:"user id not found"})
+      }
+  //  here update value
+      const FirstName = req.body?.FirstName || "";
+      const LastName = req.body?.LastName || "";
+      const NewEmail = req.body?.NewEmail || "";
+      const PhoneNumber = req.body?.PhoneNumber || "";
+      const Address = req.body?.Address || "";
+      const NationalID = req.body?.NationalID || "";
+      const Gender = req.body?.Gender || "";
+      const PassportNo = req.body?.PassportNo || "";
+      const MaritalStatus = req.body?.MaritalStatus || "";
+      const results = await UserCollection.updateOne({ email:email }, 
+        {$set:{
+          FirstName:FirstName,
+          LastName:LastName,
+          PhoneNumber:PhoneNumber,
+          Address:Address,
+          NationalID:NationalID,
+          Gender:Gender,
+          PassportNo:PassportNo,
+          MaritalStatus:MaritalStatus,
+          NewEmail:NewEmail
+        }
+      }); 
+      
+       if(results.acknowledged){
+        res.status(200).json({success: true})
+        }else{
+        res.status(400).json({success: false})
+        
+        }
+      
+    });
+
     app.get("/user/:email", async (req, res) => {
       const result = await UserCollection.find({ email: req.params.email }).toArray();
       res.json(result);
@@ -95,23 +151,26 @@ async function run() {
     app.post("/profile-edit", async (req, res) => {
       const imageLink = req.body.imageLink || "";
       const email = req.body.email || "";
+   
       if(!email){
         return res.status(400).json({message:"user not found"})
       }
       const user = await UserCollection.findOne({email:email})
-      // console.log(user);
+      console.log(user);
       if(!user._id){
         return res.status(400).json({msg:"user id not found"})
       }
-
+    
       UserCollection.updateOne({ email:email },
-        {$set:{imageLink:imageLink}
+        {$set:{
+          imageLink:imageLink,
+        }
       });
      res.send("success")
     });
 
 
-    //Here put google login info
+  //Here put google login info
     app.put("/users", async (req, res) => {
       const user = req.body;
       const filter = { email: user.email };
