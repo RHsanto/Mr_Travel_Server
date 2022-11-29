@@ -95,7 +95,7 @@ async function run() {
    
 
     
-    app.post("/pro-user/:email", async (req, res) => {
+    app.post("/edit-user/:email", async (req, res) => {
       const email = req.params?.email || "";
       // console.log(email);
       
