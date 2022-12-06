@@ -31,7 +31,6 @@ async function run() {
     const CollectionHotel = database.collection("collectionFour");
     const bookingCollection = database.collection("bookingCollection");
     const reviewsCollection = database.collection("reviewsCollection");
-    const UserInfoCollection = database.collection("UserInfoCollection");
     const UserCollection = database.collection("userCollection");
 
     //Here all get information
@@ -78,6 +77,14 @@ async function run() {
       const cursor = reviewsCollection.find({});
       const reviews = await cursor.toArray();
       res.send(reviews);
+    });
+
+
+    // HERE GET ALL USER INFO
+    app.get("/allUser", async (req, res) => {
+      const cursor = UserCollection.find({});
+      const users = await cursor.toArray();
+      res.send(users);
     });
 
     // GET SINGLE USER
