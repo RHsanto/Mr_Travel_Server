@@ -184,6 +184,30 @@ async function run() {
       }
     });
 
+      //DELETE API ORDERS
+      app.delete("/booking/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await bookingCollection.deleteOne(query);
+        res.json(result);
+      });
+  
+      // UPDATE STATUS
+      app.put("/booking/:id", async (req, res) => {
+        const id = req.params.id;
+        const filter = { _id: ObjectId(id) };
+        const option = { upsert: true };
+        const updateStatus = {
+          $set: {
+            status: "Approved",
+          },
+        };
+  
+        const result = await bookingCollection.updateOne(filter, updateStatus, option);
+        res.json(result);
+      });
+
+
     // here put upload img
 
     app.post("/profile-edit", async (req, res) => {
