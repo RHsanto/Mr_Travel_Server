@@ -244,6 +244,25 @@ async function run() {
       res.json(result);
     });
 
+// here put adding services data
+
+      app.post("/add-flight", async (req, res) => {
+        const flight = req.body;
+        const result = await CollectionFlights.insertOne(flight);
+        res.json(result);
+      });
+      app.post("/add-hotel", async (req, res) => {
+        const bus = req.body;
+        const result = await CollectionHotel.insertOne(bus);
+        res.json(result);
+      });
+      app.post("/add-tour", async (req, res) => {
+        const tour = req.body;
+        const result = await CollectionTour.insertOne(tour);
+        res.json(result);
+      });
+
+
     // here put booking data
     app.post("/booking", async (req, res) => {
       const user = req.body;
