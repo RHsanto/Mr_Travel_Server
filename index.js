@@ -251,6 +251,12 @@ async function run() {
         const result = await CollectionFlights.insertOne(flight);
         res.json(result);
       });
+      app.post("/add-flight", async (req, res) => {
+        const flight = req.body;
+        const result = await AllTravelsData.insertOne(flight);
+        res.json(result);
+      });
+      
       app.post("/add-hotel", async (req, res) => {
         const bus = req.body;
         const result = await CollectionHotel.insertOne(bus);
