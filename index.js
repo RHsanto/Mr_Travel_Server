@@ -79,7 +79,6 @@ async function run() {
       res.send(reviews);
     });
 
-
     // HERE GET ALL USER INFO
     app.get("/allUser", async (req, res) => {
       const cursor = UserCollection.find({});
@@ -184,29 +183,28 @@ async function run() {
       }
     });
 
-      //DELETE API ORDERS
-      app.delete("/booking/:id", async (req, res) => {
-        const id = req.params.id;
-        const query = { _id: ObjectId(id) };
-        const result = await bookingCollection.deleteOne(query);
-        res.json(result);
-      });
-  
-      // UPDATE STATUS
-      app.put("/booking/:id", async (req, res) => {
-        const id = req.params.id;
-        const filter = { _id: ObjectId(id) };
-        const option = { upsert: true };
-        const updateStatus = {
-          $set: {
-            status: "Approved",
-          },
-        };
-  
-        const result = await bookingCollection.updateOne(filter, updateStatus, option);
-        res.json(result);
-      });
+    //DELETE API ORDERS
+    app.delete("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await bookingCollection.deleteOne(query);
+      res.json(result);
+    });
 
+    // UPDATE STATUS
+    app.put("/booking/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const option = { upsert: true };
+      const updateStatus = {
+        $set: {
+          status: "Approved",
+        },
+      };
+
+      const result = await bookingCollection.updateOne(filter, updateStatus, option);
+      res.json(result);
+    });
 
     // here put upload img
 
@@ -244,25 +242,24 @@ async function run() {
       res.json(result);
     });
 
-// here put adding services data
+    // here put adding services data
 
-      app.post("/add-flight", async (req, res) => {
-        const flight = req.body;
-        const result = await CollectionFlights.insertOne(flight);
-        res.json(result);
-      });
-  
-      app.post("/add-hotel", async (req, res) => {
-        const bus = req.body;
-        const result = await CollectionHotel.insertOne(bus);
-        res.json(result);
-      });
-      app.post("/add-tour", async (req, res) => {
-        const tour = req.body;
-        const result = await CollectionTour.insertOne(tour);
-        res.json(result);
-      });
+    app.post("/add-flight", async (req, res) => {
+      const flight = req.body;
+      const result = await CollectionFlights.insertOne(flight);
+      res.json(result);
+    });
 
+    app.post("/add-hotel", async (req, res) => {
+      const bus = req.body;
+      const result = await CollectionHotel.insertOne(bus);
+      res.json(result);
+    });
+    app.post("/add-tour", async (req, res) => {
+      const tour = req.body;
+      const result = await CollectionTour.insertOne(tour);
+      res.json(result);
+    });
 
     // here put booking data
     app.post("/booking", async (req, res) => {
@@ -273,8 +270,14 @@ async function run() {
 
     // user info save
     app.post("/users", async (req, res) => {
-      const user = req.body;
-      const result = await UserCollection.insertOne(user);
+      const email = req.body.email;
+      const displayName = req.body.displayName;
+      const role = req.body.role;
+      if (!email || !displayName || !role) {
+        return res.status(400).json({ message: "Bad data, make sure all fields are in body" });
+      }
+      const result = await UserCollection.insertOne({ email, displayName, role });
+      // const result = await UserCollection.insertOne(user);
       res.json(result);
     });
   } finally {
