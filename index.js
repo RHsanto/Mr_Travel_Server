@@ -235,6 +235,8 @@ async function run() {
     //Here put google login info
     app.put("/users", async (req, res) => {
       const user = req.body;
+      const getUser=await UserCollection.findOne({email:req.body.email})
+      if(getUser?.email) return;
       const filter = { email: user.email };
       const options = { upsert: true };
       const updateDoc = { $set: user };
