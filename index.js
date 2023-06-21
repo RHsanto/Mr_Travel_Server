@@ -1,4 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
+const SSLCommerzPayment = require("sslcommerz-lts");
 require("dotenv").config();
 const ObjectId = require("mongodb").ObjectId;
 const express = require("express");
@@ -6,6 +7,10 @@ const cors = require("cors");
 const app = express();
 const path = require("path");
 const port = process.env.PORT || 8000;
+
+const store_id = process.env.STORE_ID;
+const store_passwd = process.env.STORE_PASS;
+const is_live = false;
 
 //middleware
 app.use(cors());
@@ -235,8 +240,8 @@ async function run() {
     //Here put google login info
     app.put("/users", async (req, res) => {
       const user = req.body;
-      const getUser=await UserCollection.findOne({email:req.body.email})
-      if(getUser?.email) return;
+      const getUser = await UserCollection.findOne({ email: req.body.email });
+      if (getUser?.email) return;
       const filter = { email: user.email };
       const options = { upsert: true };
       const updateDoc = { $set: user };
@@ -263,11 +268,79 @@ async function run() {
       res.json(result);
     });
 
+    // create unique id
+    const tran_id = new ObjectId().toString();
     // here put booking data
     app.post("/booking", async (req, res) => {
-      const user = req.body;
-      const result = await bookingCollection.insertOne(user);
-      res.json(result);
+      const order = req.body;
+      const data = {
+        total_amount: order?.price,
+        currency: "BDT",
+        tran_id: tran_id, // use unique tran_id for each api call
+        success_url: `http://localhost:8000/payment/success/${tran_id}`,
+        fail_url: `http://localhost:8000/payment/fail/${tran_id}`,
+        cancel_url: "http://localhost:3030/cancel",
+        ipn_url: "http://localhost:3030/ipn",
+        shipping_method: "Courier",
+        product_name: order?.hotelName || order?.TourName || order?.planeName,
+        product_category: order?.types,
+        product_profile: "general",
+        cus_name: order?.firstName,
+        cus_email: order?.email,
+        cus_add1: order?.address,
+        cus_add2: "Dhaka",
+        cus_city: "Dhaka",
+        cus_state: "Dhaka",
+        cus_postcode: "1000",
+        cus_country: "Bangladesh",
+        cus_phone: order?.phoneNumber,
+        cus_fax: "01711111111",
+        ship_name: "Customer Name",
+        ship_add1: "Dhaka",
+        ship_add2: "Dhaka",
+        ship_city: "Dhaka",
+        ship_state: "Dhaka",
+        ship_postcode: 1000,
+        ship_country: "Bangladesh",
+      };
+
+      // console.log(order);
+
+      const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+      sslcz.init(data).then(apiResponse => {
+        // Redirect the user to payment gateway
+        let GatewayPageURL = apiResponse.GatewayPageURL;
+        res.send({ url: GatewayPageURL });
+
+        const finalOrder = {
+          order,
+          paidStatus: false,
+          transactionId: tran_id,
+        };
+        const result = bookingCollection.insertOne(finalOrder);
+        
+      });
+
+      app.post("/payment/success/:tranId", async (req, res) => {
+        const result = await bookingCollection.updateOne(
+          { transactionId: req.params.tranId },
+          {
+            $set: {
+              paidStatus: true,
+            },
+          }
+        );
+        if (result.modifiedCount > 0) {
+          res.redirect(`http://localhost:3000/payment/success/${req.params.tranId}`);
+        }
+      });
+
+      app.post("/payment/fail/:tranId", async (req, res) => {
+        const result = await bookingCollection.deleteOne({ transactionId: req.params.tranId });
+        if (result.deletedCount) {
+          res.redirect(`http://localhost:3000/payment/fail/${req.params.tranId}`);
+        }
+      });
     });
 
     // user info save
