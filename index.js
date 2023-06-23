@@ -277,8 +277,8 @@ async function run() {
         total_amount: order?.price,
         currency: "BDT",
         tran_id: tran_id, // use unique tran_id for each api call
-        success_url: `http://localhost:8000/payment/success/${tran_id}`,
-        fail_url: `http://localhost:8000/payment/fail/${tran_id}`,
+        success_url: `https://mr-travel-server.onrender.com/payment/success/${tran_id}`,
+        fail_url: `https://mr-travel-server.onrender.com/payment/fail/${tran_id}`,
         cancel_url: "http://localhost:3030/cancel",
         ipn_url: "http://localhost:3030/ipn",
         shipping_method: "Courier",
@@ -318,7 +318,7 @@ async function run() {
           transactionId: tran_id,
         };
         const result = bookingCollection.insertOne(finalOrder);
-        // console.log('Redirecting to: ', GatewayPageURL)
+        // console.log(result)
       });
 
       app.post("/payment/success/:tranId", async (req, res) => {
@@ -331,14 +331,14 @@ async function run() {
           }
         );
         if (result.modifiedCount > 0) {
-          res.redirect(`http://localhost:3000/payment/success/${req.params.tranId}`);
+          res.redirect(`https://mr-travel.vercel.app/payment/success/${req.params.tranId}`);
         }
       });
 
       app.post("/payment/fail/:tranId", async (req, res) => {
         const result = await bookingCollection.deleteOne({ transactionId: req.params.tranId });
         if (result.deletedCount) {
-          res.redirect(`http://localhost:3000/payment/fail/${req.params.tranId}`);
+          res.redirect(`https://mr-travel.vercel.app/payment/fail/${req.params.tranId}`);
         }
       });
     });
