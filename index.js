@@ -318,7 +318,7 @@ async function run() {
           transactionId: tran_id,
         };
         const result = bookingCollection.insertOne(finalOrder);
-        
+        // console.log('Redirecting to: ', GatewayPageURL)
       });
 
       app.post("/payment/success/:tranId", async (req, res) => {
